@@ -1,0 +1,17 @@
+{
+  "name": "node-google-scraper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "email-crawler": "^1.0.4",
+    "google-scraper": "^1.1.2",
+    "promise-each": "^2.2.0"
+  }
+}
