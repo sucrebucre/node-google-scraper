@@ -1,50 +1,52 @@
 const GoogleScraper = require('google-scraper');
-const Scraper = require("email-crawler");
-const each = require('promise-each');
+const tinyreq = require("tinyreq");
+const getEmails = require('get-emails');
+const emailRegex = require('email-regex');
+const {parse, tldExists} = require('tldjs');
 
 const options = {
-  keyword: "nu contact",
+  keyword: "elektronica contact",
   language: "nl",
   tld:"nl",
-  results: 10
+  results: 100
 };
-
-let url_array = [];
 
 const scrape = new GoogleScraper(options);
 
+let email_array = [];
+
 scrape.getGoogleLinks.then(function(value) {
 
-  for (i=0; i < value.length; i++){
-    url_array.push(value[i]);
-  }
+  console.log(value.length);
 
-})
+  for(i=0;i<value.length;i++){
 
-.then(function(value) {
-//
-//   console.log("Everything is loaded");
-//   console.log(url_array);
-//
-//     //http://bluebirdjs.com/docs/api/promise.each.html
-//     //https://stackoverflow.com/questions/41607804/promise-each-without-bluebird
-//
-//     let emailscraper = new Scraper(url_array[0]);
-//
-//     emailscraper.getLevels(1)
-//     .then((emails) => {
-//       console.log(emails);
-//     })
+  tinyreq(value[i], (err, body) => {
 
-Promise.resolve(url_array)
+      if (body != null) {
+        let remove_javascript = body.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi);
+        let cleanText = remove_javascript.replace(/<\/?[^>]+(>|$)/g, "");
+        let tld_check = cleanText.match(emailRegex());
 
-  .then(each((val) =>
-    console.log(val)
-  ))
+        let substring_check = "@media";
+        let substring_check_2 = "&nbsp";
 
+        if (tldExists(tld_check) == true){
 
-//
- })
-.catch(function(e) {
+          for (i=0; i<tld_check.length; i++){
+
+            if(tld_check[i].includes(substring_check) == false && tld_check[i].includes(substring_check_2) == false) {
+              console.log(tld_check[i]);
+            }
+          }
+
+        }
+      }
+
+  });
+
+}
+
+}).catch(function(e) {
   console.log(e);
 })
